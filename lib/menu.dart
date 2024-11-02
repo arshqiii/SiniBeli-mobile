@@ -1,92 +1,104 @@
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatelessWidget {
-  final String npm = '2306275885'; // NPM
-  final String name = 'Muhammad Radhiya Arshq'; // Nama
-  final String className = 'PBP D'; // Kelas
+  final String npm = '2306275885';
+  final String name = 'Muhammad Radhiya Arshq';
+  final String className = 'PBP D';
 
-  MyHomePage({super.key});
+  MyHomePage({super.key}); //constructor
 
+  // berisi tombol-tombol yang ditambahkan pada class MyHomePage.
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Mood", Icons.mood),
-    ItemHomepage("Tambah Mood", Icons.add),
+    ItemHomepage("Lihat Daftar Produk", Icons.local_mall),
+    ItemHomepage("Tambah Produk", Icons.add),
     ItemHomepage("Logout", Icons.logout),
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold menyediakan struktur dasar halaman dengan AppBar dan body.
+    //* Scaffold menyediakan struktur dasar halaman dengan AppBar dan body.
     return Scaffold(
-      // AppBar adalah bagian atas halaman yang menampilkan judul.
+      //*============================AppBar============================//
       appBar: AppBar(
-        // Judul aplikasi "Mental Health Tracker" dengan teks putih dan tebal.
         title: const Text(
           'SiniBeli',
           style: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w700,
+            fontSize: 24,
+            letterSpacing: 0.5,
           ),
         ),
-        // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
+        elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      // Body halaman dengan padding di sekelilingnya.
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        // Menyusun widget secara vertikal dalam sebuah kolom.
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Row untuk menampilkan 3 InfoCard secara horizontal.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //*============================Body============================//
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              Colors.white,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: name),
-                InfoCard(title: 'Class', content: className),
-              ],
-            ),
+                //*============================InfoCard============================//
+                SizedBox(
+                  height: 100, 
+                  child: Row(
+                    children: [
+                      Expanded(child: InfoCard(title: 'NPM', content: npm)),
+                      const SizedBox(width: 12),
+                      Expanded(child: InfoCard(title: 'Name', content: name)),
+                      const SizedBox(width: 12),
+                      Expanded(child: InfoCard(title: 'Class', content: className)),
+                    ],
+                  ),
+                ),
 
-            // Memberikan jarak vertikal 16 unit.
-            const SizedBox(height: 16.0),
+                //* Memberikan jarak vertikal 16 unit.
+                const SizedBox(height: 16.0),
 
-            // Menempatkan widget berikutnya di tengah halaman.
-            Center(
-              child: Column(
-                // Menyusun teks dan grid item secara vertikal.
-
-                children: [
-                  // Menampilkan teks sambutan dengan gaya tebal dan ukuran 18.
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      'Welcome to SiniBeli',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
+                //*============================Welcome text============================//
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: const Text(
+                    'Welcome to SiniBeli',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 28.0,
+                      color: Colors.black87,
+                      letterSpacing: 0.5,
                     ),
                   ),
+                ),
 
-                  // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    // Agar grid menyesuaikan tinggi kontennya.
-                    shrinkWrap: true,
-
-                    // Menampilkan ItemCard untuk setiap item dalam list items.
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
-                  ),
-                ],
-              ),
+                //*============================ItemCards============================//
+                // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
+                GridView.count(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true, // Agar grid menyesuaikan tinggi kontennya.
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.85, 
+                  //* Menampilkan ItemCard untuk setiap item dalam list items.
+                  children: items.map((ItemHomepage item) {
+                    return ItemCard(item);
+                  }).toList(),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -94,32 +106,47 @@ class MyHomePage extends StatelessWidget {
 }
 
 class InfoCard extends StatelessWidget {
-  // Kartu informasi yang menampilkan title dan content.
+  //* Kartu informasi yang menampilkan title dan content.
 
-  final String title; // Judul kartu.
-  final String content; // Isi kartu.
+  final String title;  // Judul kartu.
+  final String content;  // Isi kartu.
 
-  const InfoCard({super.key, required this.title, required this.content});
+  const InfoCard({super.key, required this.title, required this.content}); //constructor
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      // Membuat kotak kartu dengan bayangan dibawahnya.
-      elevation: 2.0,
-      child: Container(
-        // Mengatur ukuran dan jarak di dalam kartu.
-        width: MediaQuery.of(context).size.width /
-            3.5, // menyesuaikan dengan lebar device yang digunakan.
-        padding: const EdgeInsets.all(16.0),
-        // Menyusun title dan content secara vertikal.
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14.0,
+                color: Colors.black87,
+              ),
             ),
-            const SizedBox(height: 8.0),
-            Text(content),
+            const SizedBox(height: 6.0),
+            Flexible(
+              child: Text(
+                content,
+                style: const TextStyle(
+                  fontSize: 12.0,
+                  color: Colors.black54,
+                  height: 1.2,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis, //handle kasus terjadi overflow
+                maxLines: 2,
+              ),
+            ),
           ],
         ),
       ),
@@ -131,51 +158,85 @@ class ItemHomepage {
   final String name;
   final IconData icon;
 
-  ItemHomepage(this.name, this.icon);
+  ItemHomepage(this.name, this.icon); //constructor
 }
 
-class ItemCard extends StatelessWidget {
-  // Menampilkan kartu dengan ikon dan nama.
-
+class ItemCard extends StatefulWidget {
+  //* Menampilkan kartu dengan ikon dan nama.
   final ItemHomepage item;
 
-  const ItemCard(this.item, {super.key});
+  const ItemCard(this.item, {super.key}); //constructor
+
+  @override
+  State<ItemCard> createState() => _ItemCardState();
+}
+
+class _ItemCardState extends State<ItemCard> {
+  bool isPressed = false;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      // Menentukan warna latar belakang dari tema aplikasi.
-      color: Theme.of(context).colorScheme.secondary,
-      // Membuat sudut kartu melengkung.
-      borderRadius: BorderRadius.circular(12),
-
-      child: InkWell(
-        // Aksi ketika kartu ditekan.
-        onTap: () {
-          // Menampilkan pesan SnackBar saat kartu ditekan.
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-                content: Text("Kamu telah menekan tombol ${item.name}!")));
-        },
-        // Container untuk menyimpan Icon dan Text
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Center(
+    return GestureDetector(
+      onTapDown: (_) {
+        setState(() {
+          isPressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          isPressed = false;
+        });
+        // menampilkan snackbar setelah animasi selesai
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                "Kamu telah menekan tombol ${widget.item.name}!",
+                style: const TextStyle(fontSize: 14),
+              ),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.all(12),
+            ),
+          );
+      },
+      onTapCancel: () {
+        setState(() {
+          isPressed = false;
+        });
+      },
+      child: AnimatedSlide( //animasi ketika itemCard ditekan
+        duration: const Duration(milliseconds: 100),
+        offset: Offset(0, isPressed ? 0.05 : 0),
+        child: Material(
+          color: Theme.of(context).colorScheme.secondary,
+          borderRadius: BorderRadius.circular(16),
+          elevation: isPressed ? 1 : 2,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
             child: Column(
-              // Menyusun ikon dan teks di tengah kartu.
               mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  item.icon,
+                  widget.item.icon,
                   color: Colors.white,
-                  size: 30.0,
+                  size: 32.0,
                 ),
-                const Padding(padding: EdgeInsets.all(3)),
+                const SizedBox(height: 8),
                 Text(
-                  item.name,
+                  widget.item.name,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis, //handle kasus overflow
                 ),
               ],
             ),
