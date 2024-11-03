@@ -9,9 +9,9 @@ class MyHomePage extends StatelessWidget {
 
   // berisi tombol-tombol yang ditambahkan pada class MyHomePage.
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Daftar Produk", Icons.local_mall),
-    ItemHomepage("Tambah Produk", Icons.add),
-    ItemHomepage("Logout", Icons.logout),
+    ItemHomepage("Lihat Daftar Produk", Icons.local_mall, const Color.fromARGB(255, 46, 193, 178),),
+    ItemHomepage("Tambah Produk", Icons.add, const Color.fromARGB(255, 111, 221, 115),),
+    ItemHomepage("Logout", Icons.logout, const Color.fromARGB(255, 225, 87, 77),),
   ];
 
   @override
@@ -157,8 +157,9 @@ class InfoCard extends StatelessWidget {
 class ItemHomepage {
   final String name;
   final IconData icon;
+  final Color color;
 
-  ItemHomepage(this.name, this.icon); //constructor
+  ItemHomepage(this.name, this.icon, this.color); //constructor
 }
 
 class ItemCard extends StatefulWidget {
@@ -212,7 +213,7 @@ class _ItemCardState extends State<ItemCard> {
         duration: const Duration(milliseconds: 100),
         offset: Offset(0, isPressed ? 0.05 : 0),
         child: Material(
-          color: Theme.of(context).colorScheme.secondary,
+          color: widget.item.color,
           borderRadius: BorderRadius.circular(16),
           elevation: isPressed ? 1 : 2,
           child: Padding(
