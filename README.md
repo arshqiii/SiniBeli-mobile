@@ -71,7 +71,92 @@ Dari kode diatas, `counter` merupakan variabel yang terdampak oleh `setState()` 
 
 ### 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist-checklist di atas.
 
+- Pertama saya membuat proyek Flutter baru di sebuah direktori dengan command `flutter create <APP_NAME>`
+- Lalu melakukan `git init` & `git add-commit-push` pada root folder supaya bisa diakses di GitHub
+- Didalam proyek Flutter yang dibuat terdapat folder `lib` yang berisi file `main.dart`, disana saya buat file `menu.dart` dan memindah sebagian kode main ke menu untuk membersihkkan struktur proyek
+- Pada proyek Flutter, saya membuat 3 tombol dengan ikon dan teks pada file `menu.dart` dengan membuat dan menggunakan class ItemHomePage & ItemCard sebagai berikut
+  ```dart
+    class ItemHomepage {
+    final String name;
+    final IconData icon;
+    final Color color;
 
+    ItemHomepage(this.name, this.icon, this.color); //constructor
+  }
+
+  class ItemCard extends StatefulWidget {
+    //* Menampilkan kartu dengan ikon dan nama.
+    final ItemHomepage item;
+
+    const ItemCard(this.item, {super.key}); //constructor
+
+    @override
+    State<ItemCard> createState() => _ItemCardState();
+  }
+  ```
+- ItemCard merupakan widget yang stateful sehingga dapat berubah secara dinamis, pada classnya terdapat function `createState()` yang merupakan sebuah metode yang digunakan dalam implementasi widget yang bersifat stateful di Flutter
+- `createState()` mengembalikan `_ItemCardState()` yang berisi semua variabel dan logika untuk mengelola state widget ItemCard
+- Untuk mengimplementasikan warna-warna yang berbeda pada tiap tombol ditambah atribut color pada class ItemHomePage
+- Lalu untuk inisialisasi tombol-tombol tersebut diletakkan dalam class MyHomePage seperti berikut 
+  ```dart
+    final List<ItemHomepage> items = [
+      ItemHomepage("Lihat Daftar Produk", Icons.local_mall, const Color.fromARGB(255, 46, 193, 178),),
+      ItemHomepage("Tambah Produk", Icons.add, const Color.fromARGB(255, 111, 221, 115),),
+      ItemHomepage("Logout", Icons.logout, const Color.fromARGB(255, 225, 87, 77),),
+    ];
+  ```
+- Lalu untuk memunculkannya dilakukan dengan :
+  ```dart
+    ...
+    GridView.count(
+      ...
+      //* Menampilkan ItemCard untuk setiap item dalam list items.
+      children: items.map((ItemHomepage item) {
+        return ItemCard(item);
+      }).toList(),
+    ),
+    ...
+  ```
+- Untuk memunculkan Snackbar ketika tiap tombol ditekan, ditambahkan konfigurasi pada `_ItemCardState` sebagai berikut
+  ```dart
+  class _ItemCardState extends State<ItemCard> {
+  bool isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) {
+        setState(() {
+          isPressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          isPressed = false;
+        });
+        // menampilkan snackbar setelah animasi selesai
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                "Kamu telah menekan tombol ${widget.item.name}!",
+                style: const TextStyle(fontSize: 14),
+              ),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.all(12),
+            ),
+          );
+      },
+    )
+  }
+  }
+    ...
+  ```
+- Ini memungkinkan setelah tombol ditekan akan keluar snackbar dengan content sesuai dengan tombol yang ditekan
 
 ## ✅ Checklist Tugas 7
 
@@ -85,7 +170,7 @@ Dari kode diatas, `counter` merupakan variabel yang terdampak oleh `setState()` 
   - "Kamu telah menekan tombol Lihat Daftar Produk" ketika tombol Lihat Daftar Produk ditekan.
   - "Kamu telah menekan tombol Tambah Produk" ketika tombol Tambah Produk ditekan.
   - "Kamu telah menekan tombol Logout" ketika tombol Logout ditekan.
-- [ ] Menjawab beberapa pertanyaan berikut pada README.md pada root_folder.
+- [x] Menjawab beberapa pertanyaan berikut pada README.md pada root_folder.
   - Jelaskan apa yang dimaksud dengan stateless widget dan stateful widget, dan jelaskan perbedaan dari keduanya.
   - Sebutkan widget apa saja yang kamu gunakan pada proyek ini dan jelaskan fungsinya.
   - Apa fungsi dari setState()? Jelaskan variabel apa saja yang dapat terdampak dengan fungsi tersebut.
