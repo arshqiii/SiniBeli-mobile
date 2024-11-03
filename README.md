@@ -27,7 +27,7 @@
     - [x] Melihat daftar produk (Lihat Daftar Produk)
     - [x] Menambah produk (Tambah Produk)
     - [x] Logout (Logout)
-- [ ] Mengimplementasikan warna-warna yang berbeda untuk setiap tombol (Lihat Daftar Produk, Tambah Produk, dan Logout).
+- [x] Mengimplementasikan warna-warna yang berbeda untuk setiap tombol (Lihat Daftar Produk, Tambah Produk, dan Logout).
 - [x] Memunculkan Snackbar dengan tulisan:
     - "Kamu telah menekan tombol Lihat Daftar Produk" ketika tombol Lihat Daftar Produk ditekan.
     - "Kamu telah menekan tombol Tambah Produk" ketika tombol Tambah Produk ditekan.
