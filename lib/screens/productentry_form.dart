@@ -22,10 +22,22 @@ class _ProductFormPageState extends State<ProductFormPage> {
         title: const Center(
           child: Text(
             'Form Tambah Product',
+            style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 24,
+            letterSpacing: 0.5,
+          ),
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
+        centerTitle: true,
+        leading: IconButton( //* Menambahkan icon back sebagai tombol keluar
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back_ios_new)),
       ),
       drawer: const LeftDrawer(), //* Menambahkan Drawer dalam widget form page
       body: Form(
@@ -172,7 +184,36 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         Theme.of(context).colorScheme.primary),
                   ),
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {}
+                    if (_formKey.currentState!.validate()) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Produk Telah Tersimpan'),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    //*Value-value yang muncul di Alert Dialog
+                                    Text('Name : $_nama'),
+                                    Text('Amount : $_amount'),
+                                    Text('Price : Rp$_price.00'),
+                                    Text('Description : $_description'),
+                                  ],
+                                ),
+                              ),
+                              actions: [
+                                //* Menambahkan tombol OK untuk menutup Alert Dialog serta mereset isi form
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      _formKey.currentState!.reset();
+                                    },
+                                    child: const Text('OK'))
+                              ],
+                            );
+                          });
+                    }
                   },
                   child: const Text(
                     "Save",
