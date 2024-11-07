@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sinibeli_mobile/widgets/left_drawer.dart';
 
 class MyHomePage extends StatelessWidget {
   final String npm = '2306275885';
@@ -31,7 +32,9 @@ class MyHomePage extends StatelessWidget {
         ),
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      drawer: const LeftDrawer(), //* Menambahkan Drawer dalam widget Scaffold
       //*============================Body============================//
       body: Container(
         decoration: BoxDecoration(
