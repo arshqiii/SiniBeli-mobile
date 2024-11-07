@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sinibeli_mobile/screens/menu.dart';
+import 'package:sinibeli_mobile/screens/productentry_form.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -25,14 +26,12 @@ class LeftDrawer extends StatelessWidget {
                   ),
                 ),
                 Padding(padding: EdgeInsets.all(8)),
-                Text(
-                  "Ayo beli di SiniBeli!, pasti ada yang kamu mau disini!",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color : Colors.white,
-                  )
-                ),
+                Text("Ayo beli di SiniBeli!, pasti ada yang kamu mau disini!",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    )),
               ],
             ),
           ),
@@ -52,12 +51,11 @@ class LeftDrawer extends StatelessWidget {
             leading: const Icon(Icons.add_shopping_cart),
             title: const Text('Tambah Product'),
             onTap: () {
-              // Navigator.push(
-              //   context, 
-              //   MaterialPageRoute(
-              //     builder: (context) => const 
-              //   )
-              // )
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProductFormPage(),
+                  ));
             },
           ),
         ],
