@@ -8,13 +8,124 @@
 
 ### 1. Apa kegunaan const di Flutter? Jelaskan apa keuntungan ketika menggunakan const pada kode Flutter. Kapan sebaiknya kita menggunakan const, dan kapan sebaiknya tidak digunakan?
 
+Keyword `const` di Flutter digunakan untuk membuat sebuah objek/nilai yang bersifat konstan selama compile time.
+
+Ketika sebuah widget ditandai dengan `const`, ini akan dianggap oleh Flutter sebagai objek yang pre-built dan immutable. Ini memungkinkan Flutter untuk reuse objek tersebut daripada membuat yang baru sehingga menghindari alokasi memori yang tidak diperlukan sehingga menghasilkan kinerja yang lancar.
+
+`const` sebaiknya digunakan ketika membuat data objek atau widget yang stateless (seperti `Color` dan `Text`) dan sebaiknya dihindar ketika membuat widget yang dinamis/stateful seperti yang bergantung pada input user atau data yang sering berubah.
+
 ### 2. Jelaskan dan bandingkan penggunaan Column dan Row pada Flutter. Berikan contoh implementasi dari masing-masing layout widget ini!
+
+Column dan Row merupakan dua layout widget dalam Flutter yang berfungsi untuk menata widget secara vertikal dan horizontal sesuai keperluan.
+
+1. Column
+   
+   Fungsi : digunakan untuk menata widget secara vertikal dari atas ke bawah
+   
+   Implementasi :
+    ```dart
+    Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text("Widget 1"),
+        Text("Widget 2"),
+        Text("Widget 3"),
+        ],
+    )
+    ```
+
+2. Row
+
+   Fungsi : digunakan untuk menata widget secara horizontal dari kiri ke kanan
+   
+   Implementasi :
+    ```dart
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(Icons.star),
+        Icon(Icons.favorite),
+        Icon(Icons.thumb_up),
+      ],
+    )
+    ```
 
 ### 3. Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
 
+Untuk tugas kali ini, elemen input yang saya gunakan pada halaman form hanya `TextFormField`. Ini digunakan untuk menerima input user terkait nama produk, jumlah produk yang tersedia, harga, dan deskripsi. Ini juga dilengkapi dengan validasi jika input kurang sesuai.
+
+Di Flutter, selain `TextFormField` terdapat banyak elemen input yang tersedia seperti :
+- `Checkbox` : Memungkinkan user memilih satu atau lebih opsi dari banyak pilihan
+- `Radio` : Digunakan ketika terdapat sejumlah pilihan dan user hanya bisa memilih satu opsi dari beberapa pilihan tersebut.
+- `Switch` : Mirip seperti Checkbox, namun bentuknya seperti tombol yang bisa digeser ke kiri atau kanan. Digunakan untuk pengaturan seperti mengaktifkan atau menonaktifkan fitur tertentu.
+- `DropdownButton` : Menampilkan menu tarik turun atau dropdown yang memungkinkan user memilih satu dari beberapa opsi yang tersedia. 
+
 ### 4. Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
 
+Cara saya mengatur tema dalam aplikasi Flutter supaya konsisten adalah dengan melakukan pengaturan di file `main.dart`. Disana ditetapkan tema global pada widget `MaterialApp` sehingga memastikan komponen-komponen UI yang menggunakan tema mengikuti gaya yang seragam di seluruh aplikasi.
+
+```dart
+MaterialApp(
+      title: 'SiniBeli-mobile',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.teal,
+        ).copyWith(secondary: const Color.fromARGB(255, 154, 225, 119)),
+        useMaterial3: true,
+      ),
+      home: MyHomePage(),
+    );
+```
+Lalu untuk mengimplementasikannya ke elemen lain di aplikasi dilakukan seperti berikut,
+```dart
+...
+ backgroundColor: Theme.of(context).colorScheme.primary,
+...
+```
+Pada contoh diatas `backgroundColor` mengambil warna yang sesuai dengan yang diterapkan di `MaterialApp` sehingga konsisten dengan yang ditetapkan.
+
 ### 5. Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
+
+Navigasi dalam aplikasi dilakukan dengan drawer yang dibuat, drawer tersebut berisi tombol-tombol yang mengarahkan user ke halaman tertentu seperti halaman form tambah produk baru atau ke halaman utama.
+
+Ini dilakukan dengan widget `Navigator` melalui `BuildContext` dan memanggil fungsi yang ada, seperti :
+- `push()` : menambahkan suatu route ke dalam stack route sehingga route yang baru saja ditambahkan tersebut akan muncul dan ditampilkan kepada pengguna
+  ```dart
+  ...
+  onTap: () {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProductFormPage(),
+          ));
+    },
+  ...
+  ```
+- `pop()` : menghapus route yang sedang ditampilkan kepada pengguna dan menyebabkan aplikasi untuk berpindah dari route yang sedang ditampilkan kepada pengguna ke route yang berada di bawahnya
+  ```dart
+  ...
+  IconButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: const Icon(Icons.arrow_back_ios_new))
+  ...
+  ```
+- `pushReplacement()` :  menghapus route yang sedang ditampilkan kepada pengguna dan menggantinya dengan suatu route, ini menyebabkan route lama pada atas stack akan digantikan secara langsung oleh route baru yang diberikan tanpa mengubah kondisi elemen stack yang berada di bawahnya.
+Implementasi :
+  ```dart
+  ...
+  onTap: () {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyHomePage(),
+          ));
+    },
+  ...
+  ```
 
 ## ✅ Checklist Tugas 8
 
@@ -30,12 +141,12 @@
   - Drawer minimal memiliki dua buah opsi, yaitu Halaman Utama dan Tambah Item.
   - Ketika memiih opsi Halaman Utama, maka aplikasi akan mengarahkan pengguna ke halaman utama.
   - Ketika memiih opsi Tambah Item, maka aplikasi akan mengarahkan pengguna ke halaman form tambah item baru.
-- [ ] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
-  * Apa kegunaan const di Flutter? Jelaskan apa keuntungan ketika menggunakan const pada kode Flutter. Kapan sebaiknya kita menggunakan const, dan kapan sebaiknya tidak digunakan?
-  * Jelaskan dan bandingkan penggunaan Column dan Row pada Flutter. Berikan contoh implementasi dari masing-masing layout widget ini!
-  * Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
-  * Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
-  * Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
+- [x] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
+  - Apa kegunaan const di Flutter? Jelaskan apa keuntungan ketika menggunakan const pada kode Flutter. Kapan sebaiknya kita menggunakan const, dan kapan sebaiknya tidak digunakan?
+  - Jelaskan dan bandingkan penggunaan Column dan Row pada Flutter. Berikan contoh implementasi dari masing-masing layout widget ini!
+  - Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
+  - Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
+  - Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
 - [x] Melakukan add-commit-push ke GitHub.
 
 ## 📃 Tugas 7
@@ -73,6 +184,7 @@
 Fungsi `setState()` digunakan untuk memberitahu framework bahwa ada perubahan pada data (state) yang perlu diperbarui pada tampilan. Ketika fungsi tersebut dipanggil Flutter akan merender ulang widget yang berada di dalamnya dengan nilai state yang telah diperbarui. Ini membantu menjaga sinkronisasi antara data dan tampilan, memungkinkan aplikasi untuk merespons perubahan data secara dinamis. Variabel-variabel yang biasanya terdampak adalah variabel yang disimpan dalam `State` class, atau variabel yang dideklarasikan sebagai bagian dari state di dalam widget
 
 contoh :
+
 ```dart
 class CounterWidgetState extends StatefulWidget {
   int counter = 0;
@@ -97,6 +209,7 @@ class CounterWidgetState extends StatefulWidget {
   }
 }
 ```
+
 Dari kode diatas, `counter` merupakan variabel yang terdampak oleh `setState()` dan ketika tombol ditekan, `incrementCounter()` dipanggil dan memperbarui nilai counter menggunakan `setState()` sehingga tampilannya terupdate.
 
 ### 4. Jelaskan perbedaan antara const dengan final.
@@ -109,6 +222,7 @@ Dari kode diatas, `counter` merupakan variabel yang terdampak oleh `setState()` 
 - Lalu melakukan `git init` & `git add-commit-push` pada root folder supaya bisa diakses di GitHub
 - Didalam proyek Flutter yang dibuat terdapat folder `lib` yang berisi file `main.dart`, disana saya buat file `menu.dart` dan memindah sebagian kode main ke menu untuk membersihkkan struktur proyek
 - Pada proyek Flutter, saya membuat 3 tombol dengan ikon dan teks pada file `menu.dart` dengan membuat dan menggunakan class ItemHomePage & ItemCard sebagai berikut
+
   ```dart
     class ItemHomepage {
     final String name;
@@ -128,10 +242,11 @@ Dari kode diatas, `counter` merupakan variabel yang terdampak oleh `setState()` 
     State<ItemCard> createState() => _ItemCardState();
   }
   ```
+
 - ItemCard merupakan widget yang stateful sehingga dapat berubah secara dinamis, pada classnya terdapat function `createState()` yang merupakan sebuah metode yang digunakan dalam implementasi widget yang bersifat stateful di Flutter
 - `createState()` mengembalikan `_ItemCardState()` yang berisi semua variabel dan logika untuk mengelola state widget ItemCard
 - Untuk mengimplementasikan warna-warna yang berbeda pada tiap tombol ditambah atribut color pada class ItemHomePage
-- Lalu untuk inisialisasi tombol-tombol tersebut diletakkan dalam class MyHomePage seperti berikut 
+- Lalu untuk inisialisasi tombol-tombol tersebut diletakkan dalam class MyHomePage seperti berikut
   ```dart
     final List<ItemHomepage> items = [
       ItemHomepage("Lihat Daftar Produk", Icons.local_mall, const Color.fromARGB(255, 46, 193, 178),),
@@ -152,6 +267,7 @@ Dari kode diatas, `counter` merupakan variabel yang terdampak oleh `setState()` 
     ...
   ```
 - Untuk memunculkan Snackbar ketika tiap tombol ditekan, ditambahkan konfigurasi pada `_ItemCardState` sebagai berikut
+
   ```dart
   class _ItemCardState extends State<ItemCard> {
   bool isPressed = false;
@@ -190,6 +306,7 @@ Dari kode diatas, `counter` merupakan variabel yang terdampak oleh `setState()` 
   }
     ...
   ```
+
 - Ini memungkinkan setelah tombol ditekan akan keluar snackbar dengan content sesuai dengan tombol yang ditekan
 
 ## ✅ Checklist Tugas 7
