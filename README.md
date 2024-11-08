@@ -18,15 +18,15 @@
 
 ## ✅ Checklist Tugas 8
 
-- [ ] Membuat minimal satu halaman baru pada aplikasi, yaitu halaman formulir tambah item baru dengan ketentuan sebagai berikut:
+- [x] Membuat minimal satu halaman baru pada aplikasi, yaitu halaman formulir tambah item baru dengan ketentuan sebagai berikut:
   - Memakai minimal tiga elemen input, yaitu name, amount, description. Tambahkan elemen input sesuai dengan model pada aplikasi tugas Django yang telah kamu buat.
   - Memiliki sebuah tombol Save.
   - Setiap elemen input di formulir juga harus divalidasi dengan ketentuan sebagai berikut:
     - Setiap elemen input tidak boleh kosong.
     - Setiap elemen input harus berisi data dengan tipe data atribut modelnya.
-- [ ] Mengarahkan pengguna ke halaman form tambah item baru ketika menekan tombol Tambah Item pada halaman utama.
-- [ ] Memunculkan data sesuai isi dari formulir yang diisi dalam sebuah pop-up setelah menekan tombol Save pada halaman formulir tambah item baru.
-- [ ] Membuat sebuah drawer pada aplikasi dengan ketentuan sebagai berikut:
+- [x] Mengarahkan pengguna ke halaman form tambah item baru ketika menekan tombol Tambah Item pada halaman utama.
+- [x] Memunculkan data sesuai isi dari formulir yang diisi dalam sebuah pop-up setelah menekan tombol Save pada halaman formulir tambah item baru.
+- [x] Membuat sebuah drawer pada aplikasi dengan ketentuan sebagai berikut:
   - Drawer minimal memiliki dua buah opsi, yaitu Halaman Utama dan Tambah Item.
   - Ketika memiih opsi Halaman Utama, maka aplikasi akan mengarahkan pengguna ke halaman utama.
   - Ketika memiih opsi Tambah Item, maka aplikasi akan mengarahkan pengguna ke halaman form tambah item baru.
@@ -36,7 +36,7 @@
   * Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
   * Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
   * Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
-- [ ] Melakukan add-commit-push ke GitHub.
+- [x] Melakukan add-commit-push ke GitHub.
 
 ## 📃 Tugas 7
 
