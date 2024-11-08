@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sinibeli_mobile/screens/productentry_form.dart';
 
 class ItemHomepage {
   final String name;
@@ -49,13 +50,22 @@ class _ItemCardState extends State<ItemCard> {
               margin: const EdgeInsets.all(12),
             ),
           );
+        if (widget.item.name == "Tambah Produk") {
+          //*Menambahkan routing ke halaman form
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProductFormPage(),
+              ));
+        }
       },
       onTapCancel: () {
         setState(() {
           isPressed = false;
         });
       },
-      child: AnimatedSlide( //animasi ketika itemCard ditekan
+      child: AnimatedSlide(
+        //animasi ketika itemCard ditekan
         duration: const Duration(milliseconds: 100),
         offset: Offset(0, isPressed ? 0.05 : 0),
         child: Material(
