@@ -4,6 +4,48 @@
 <h5> 🆔 NPM : 2306275885 </h5>
 <h5> 🏛️ Kelas : PBP D </h5>
 
+## 📃 Tugas 9
+
+### 1. Jelaskan mengapa kita perlu membuat model untuk melakukan pengambilan ataupun pengiriman data JSON? Apakah akan terjadi error jika kita tidak membuat model terlebih dahulu?
+
+
+### 2. Jelaskan fungsi dari library http yang sudah kamu implementasikan pada tugas ini
+
+
+### 3. Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+
+
+### 4. Jelaskan mekanisme pengiriman data mulai dari input hingga dapat ditampilkan pada Flutter.
+
+
+### 5. Jelaskan mekanisme autentikasi dari login, register, hingga logout. Mulai dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+
+
+### 6. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+
+
+## ✅ Checklist Tugas 9
+- [ ] Memastikan deployment proyek tugas Django kamu telah berjalan dengan baik.
+- [ ] Mengimplementasikan fitur registrasi akun pada proyek tugas Flutter.
+- [ ] Membuat halaman login pada proyek tugas Flutter.
+- [ ] Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
+- [ ] Membuat model kustom sesuai dengan proyek aplikasi Django.
+- [ ] Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
+    - Tampilkan name, price, dan description dari masing-masing item pada halaman ini.
+- [ ] Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item.
+    - Halaman ini dapat diakses dengan menekan salah satu item pada halaman daftar Item.
+    - Tampilkan seluruh atribut pada model item kamu pada halaman ini.
+    - Tambahkan tombol untuk kembali ke halaman daftar item.
+- [ ] Melakukan filter pada halaman daftar item dengan hanya menampilkan item yang terasosiasi dengan pengguna yang login.
+- [ ] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
+    - Jelaskan mengapa kita perlu membuat model untuk melakukan pengambilan ataupun pengiriman data JSON? Apakah akan terjadi error jika kita tidak membuat model terlebih dahulu?
+    - Jelaskan fungsi dari library http yang sudah kamu implementasikan pada tugas ini
+    - Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+    - Jelaskan mekanisme pengiriman data mulai dari input hingga dapat ditampilkan pada Flutter.
+    - Jelaskan mekanisme autentikasi dari login, register, hingga logout. Mulai dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+    - Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+- [ ] Melakukan add-commit-push ke GitHub.
+
 ## 📃 Tugas 8
 
 ### 1. Apa kegunaan const di Flutter? Jelaskan apa keuntungan ketika menggunakan const pada kode Flutter. Kapan sebaiknya kita menggunakan const, dan kapan sebaiknya tidak digunakan?
