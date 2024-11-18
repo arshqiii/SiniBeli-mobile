@@ -72,7 +72,7 @@ class _ProductState extends State<ProductPage> {
             } else {
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
-                itemCount: snapshot.data!.length,
+                itemCount: snapshot.data!.length, 
                 itemBuilder: (_, index) => Card(
                   elevation: 3,
                   margin: const EdgeInsets.only(bottom: 16),

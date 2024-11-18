@@ -317,7 +317,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                           if (_image == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Please select an image!"),
+                                content: Text("Please select an image!"), 
                               ),
                             );
                             return;
