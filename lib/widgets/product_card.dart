@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sinibeli_mobile/screens/productentry_form.dart';
+import 'package:sinibeli_mobile/screens/list_product.dart';
 
 class ItemHomepage {
   final String name;
@@ -56,6 +57,12 @@ class _ItemCardState extends State<ItemCard> {
               context,
               MaterialPageRoute(
                 builder: (context) => const ProductFormPage(),
+              ));
+        } else if (widget.item.name == "Lihat Daftar Produk") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProductPage(),
               ));
         }
       },

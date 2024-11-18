@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sinibeli_mobile/screens/menu.dart';
 import 'package:sinibeli_mobile/screens/productentry_form.dart';
+import 'package:sinibeli_mobile/screens/list_product.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -55,6 +56,17 @@ class LeftDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ProductFormPage(),
+                  ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.local_mall),
+            title: const Text('Lihat Daftar Product'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProductPage(),
                   ));
             },
           ),

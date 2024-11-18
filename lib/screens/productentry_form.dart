@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:sinibeli_mobile/screens/menu.dart';
 import 'package:sinibeli_mobile/widgets/left_drawer.dart';
 
 class ProductFormPage extends StatefulWidget {
@@ -11,12 +16,13 @@ class ProductFormPage extends StatefulWidget {
 class _ProductFormPageState extends State<ProductFormPage> {
   final _formKey = GlobalKey<FormState>();
   String _nama = "";
-  int _amount = 0;
   int _price = 0;
   String _description = "";
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -115,67 +121,6 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         if (value.length < 5) {
                           //* validasi jika field nama diisi nama kurang dari 5 karakter
                           return 'Panjang minimal adalah 5 karakter';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                //*==========================Input Jumlah Produk=============================//
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "isi jumlah yang tersedia",
-                        labelText: "Amount",
-                        prefixIcon: Icon(Icons.inventory_2,
-                            color: Theme.of(context).colorScheme.primary),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.5),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (String? value) {
-                        //* akan dijalankan setiap ada perubahan isi TextFormField.
-                        setState(() {
-                          _amount = int.tryParse(value!) ??
-                              0; //* konversi string ke int
-                        });
-                      },
-                      validator: (String? value) {
-                        //* melakukan validasi isi TextFormField
-                        if (value == null || value.isEmpty) {
-                          //* validasi jika field nama kosong
-                          return "Jumlah Produk tidak boleh kosong!";
-                        }
-                        final intAmount = int.tryParse(value);
-                        if (intAmount == null) {
-                          return "Harus berupa angka!";
-                        }
-                        if (intAmount <= 0) {
-                          return 'Masa Jumlahnya kurang dari nol!';
                         }
                         return null;
                       },
@@ -311,64 +256,36 @@ class _ProductFormPageState extends State<ProductFormPage> {
                         ),
                         elevation: 2,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  title: const Text(
-                                    'Produk Telah Tersimpan',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        //*Value-value yang muncul di Alert Dialog
-                                        Text('Name : $_nama',
-                                            style:
-                                                const TextStyle(fontSize: 16)),
-                                        const SizedBox(height: 8),
-                                        Text('Amount : $_amount',
-                                            style:
-                                                const TextStyle(fontSize: 16)),
-                                        const SizedBox(height: 8),
-                                        Text('Price : Rp$_price.00',
-                                            style:
-                                                const TextStyle(fontSize: 16)),
-                                        const SizedBox(height: 8),
-                                        Text('Description : $_description',
-                                            style:
-                                                const TextStyle(fontSize: 16)),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    //* Menambahkan tombol OK untuk menutup Alert Dialog serta mereset isi form
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          _formKey.currentState!.reset();
-                                        },
-                                        child: Text(
-                                          'OK',
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ))
-                                  ],
-                                );
-                              });
+                          // Kirim ke Django dan tunggu respons
+                          final response = await request.postJson(
+                            "http://127.0.0.1:8000/create-flutter/",
+                            jsonEncode(<String, String>{
+                              'name': _nama,
+                              'price': _price.toString(),
+                              'description': _description,
+                            }),
+                          );
+                          if (context.mounted) {
+                            if (response['status'] == 'success') {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("Mood baru berhasil disimpan!"),
+                              ));
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyHomePage()),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text(
+                                    "Terdapat kesalahan, silakan coba lagi."),
+                              ));
+                            }
+                          }
                         }
                       },
                       child: const Text(
