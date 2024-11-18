@@ -79,30 +79,6 @@ class _ProductState extends State<ProductPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(4),
-                        ),
-                        child: Image.network(
-                          "http://127.0.0.1:8000${snapshot.data![index].fields.image}", // Remove the forward slash
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              height: 200,
-                              color: Colors.grey[200],
-                              child: Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 40,
-                                  color: Colors.grey[400],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(

@@ -37,14 +37,12 @@ class Fields {
     String name;
     int price;
     String description;
-    String image;
 
     Fields({
         required this.user,
         required this.name,
         required this.price,
         required this.description,
-        required this.image,
     });
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
@@ -52,7 +50,6 @@ class Fields {
         name: json["name"],
         price: json["price"],
         description: json["description"],
-        image: json["image"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -60,6 +57,5 @@ class Fields {
         "name": name,
         "price": price,
         "description": description,
-        "image": image,
     };
 }
