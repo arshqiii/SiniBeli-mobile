@@ -1,6 +1,7 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:sinibeli_mobile/screens/menu.dart';
@@ -18,6 +19,17 @@ class _ProductFormPageState extends State<ProductFormPage> {
   String _nama = "";
   int _price = 0;
   String _description = "";
+  File? _image;
+  final _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -242,6 +254,50 @@ class _ProductFormPageState extends State<ProductFormPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
+                //*==========================Input File Image=============================//
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        if (_image != null)
+                          Container(
+                            height: 200,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              image: DecorationImage(
+                                image: FileImage(_image!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                          ),
+                          onPressed: _pickImage,
+                          icon: const Icon(Icons.image, color: Colors.white),
+                          label: Text(
+                            _image == null ? 'Pick Image' : 'Change Image',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 //*==========================Save Produk=============================//
                 Align(
                   alignment: Alignment.center,
@@ -258,6 +314,18 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
+                          if (_image == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Please select an image!"),
+                              ),
+                            );
+                            return;
+                          }
+
+                          final imageBytes = await _image!.readAsBytes();
+                          final base64Image = base64Encode(imageBytes);
+
                           // Kirim ke Django dan tunggu respons
                           final response = await request.postJson(
                             "http://127.0.0.1:8000/create-flutter/",
@@ -265,6 +333,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                               'name': _nama,
                               'price': _price.toString(),
                               'description': _description,
+                              'image': base64Image,
                             }),
                           );
                           if (context.mounted) {
