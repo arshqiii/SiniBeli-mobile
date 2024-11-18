@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sinibeli_mobile/screens/menu.dart';
+import 'package:sinibeli_mobile/screens/register.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -154,13 +155,13 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 36.0),
                   GestureDetector(
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const RegisterPage()),
-                    //   );
-                    // },
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()),
+                      );
+                    },
                     child: Text(
                       'Don\'t have an account? Register',
                       style: TextStyle(
