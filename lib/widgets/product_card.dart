@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:sinibeli_mobile/screens/login.dart';
 import 'package:sinibeli_mobile/screens/productentry_form.dart';
 import 'package:sinibeli_mobile/screens/list_product.dart';
 
@@ -25,13 +28,14 @@ class _ItemCardState extends State<ItemCard> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return GestureDetector(
       onTapDown: (_) {
         setState(() {
           isPressed = true;
         });
       },
-      onTapUp: (_) {
+      onTapUp: (_) async {
         setState(() {
           isPressed = false;
         });
@@ -64,6 +68,28 @@ class _ItemCardState extends State<ItemCard> {
               MaterialPageRoute(
                 builder: (context) => const ProductPage(),
               ));
+        } else if (widget.item.name == "Logout") {
+          final response = await request.logout(
+              "http://127.0.0.1:8000/auth/logout/");
+          String message = response["message"];
+          if (context.mounted) {
+            if (response['status']) {
+              String uname = response["username"];
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("$message Sampai jumpa, $uname."),
+              ));
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                ),
+              );
+            }
+          }
         }
       },
       onTapCancel: () {
