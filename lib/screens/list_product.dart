@@ -13,10 +13,12 @@ class ProductPage extends StatefulWidget {
 
 class _ProductState extends State<ProductPage> {
   Future<List<Product>> fetchProduct(CookieRequest request) async {
+    //* Melakukan async get ke url json
     final response = await request.get('http://127.0.0.1:8000/json/');
     var data = response;
+    //* Mengambil data produk dan dimasukkan list
     List<Product> listProduct = [];
-    for (var d in data) {
+    for (var d in data) { //* Mengambil data produk dari response 
       if (d != null) {
         listProduct.add(Product.fromJson(d));
       }
@@ -38,8 +40,15 @@ class _ProductState extends State<ProductPage> {
         ),
         backgroundColor: const Color.fromARGB(255, 154, 225, 119),
         elevation: 0,
+        leading: IconButton(
+            //* Menambahkan icon back sebagai tombol keluar
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back_ios_new)),
       ),
       drawer: const LeftDrawer(),
+      // * Menampilkan data yang telah dikonversi ke aplikasi dengan FutureBuilder
       body: FutureBuilder(
         future: fetchProduct(request),
         builder: (context, AsyncSnapshot snapshot) {
@@ -58,7 +67,7 @@ class _ProductState extends State<ProductPage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'No products available in SiniBeli yet.',
+                      'No products available in SiniBeli yet.', //*Ketika tidak ada produk
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.grey[600],
@@ -70,9 +79,10 @@ class _ProductState extends State<ProductPage> {
                 ),
               );
             } else {
+              //* Menampilkan detail produk
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
-                itemCount: snapshot.data!.length, 
+                itemCount: snapshot.data!.length,
                 itemBuilder: (_, index) => Card(
                   elevation: 3,
                   margin: const EdgeInsets.only(bottom: 16),
@@ -84,6 +94,7 @@ class _ProductState extends State<ProductPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            //*=============Nama Produk=============//
                             Text(
                               snapshot.data![index].fields.name,
                               style: const TextStyle(
@@ -92,6 +103,7 @@ class _ProductState extends State<ProductPage> {
                               ),
                             ),
                             const SizedBox(height: 8),
+                            //*============Harga Produk============//
                             Text(
                               "Rp${snapshot.data![index].fields.price.toString().replaceAllMapped(
                                     RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
@@ -104,6 +116,7 @@ class _ProductState extends State<ProductPage> {
                               ),
                             ),
                             const SizedBox(height: 12),
+                            //*==========Deskripsi Produk==========//
                             Text(
                               snapshot.data![index].fields.description,
                               style: TextStyle(
