@@ -8,21 +8,310 @@
 
 ### 1. Jelaskan mengapa kita perlu membuat model untuk melakukan pengambilan ataupun pengiriman data JSON? Apakah akan terjadi error jika kita tidak membuat model terlebih dahulu?
 
+Dalam membuat Aplikasi Flutter, membuat model untuk melakukan pengambilan ataupun pengiriman data JSON merupakan sebuah praktik yang disarankan untuk menjaga struktur kode yang rapi, efisien, dan mudah dikelola. Dengan membuat model kita dapat :
+
+- Menetapkan struktur data yang jelas untuk aplikasi sehingga menghindari kesalahan seperti akses field yang salah atau ketidaksesuaian tipe data.
+- Memungkinkan parsing JSON menjadi objek Dart yang lebih mudah digunakan dibandingkan bekerja langsung dengan map data
+- Kode menjadi lebih rapi dan mudah dipahami karena data selalu dikemas dalam bentuk objek yang jelas strukturnya.
+
+Jika tidak membuat model terlebih dahulu, aplikasi Flutter masih bisa berjalan tanpa error namun :
+
+- Lebih rentan ke error karena jika bekerja langsung dengan data JSON, salah mengetik nama field atau asumsi tipe data yang keliru bisa menyebabkan runtime error
+- Penggunaan data langsung dari JSON tanpa model dapat membuat kode lebih sulit dipahami dan dikelola, terutama dalam proyek yang besar
 
 ### 2. Jelaskan fungsi dari library http yang sudah kamu implementasikan pada tugas ini
 
+Pada tugas ini library atau package http digunakan untuk supaya aplikasi flutter yang kita buat dapat mengambil data objek Product dari proyek Django yang dibuat pada tugas-tugas lalu. Beberapa fungsi dari library http yang diimplementasi pada tugas ini adalah :
+
+- Mengirim HTTP Request berupa GET, POST, PUT, DELETE
+- Mengambil (fetch) data dari API yang kemudian dapat didecode menjadi object dart
+- Mengunggah file seperti gambar atau dokumen ke server.
 
 ### 3. Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
 
+CookieRequest merupakan bagian dari Library `pbp_django_auth` yang dikembangkan tim asisten dosen untuk melakukan kontak dengan web service Django
+Fungsi dari CookieRequest ini adalah :
+
+- Mengelola otentikasi menggunakan cookie
+- Menyederhanakan HTTP request
+- Mendukung pelacakan status login
+
+Instance CookieRequest perlu dibagikan ke semua komponen di aplikasi Flutter karena dapat
+- Memastikan konsistensi informasi status login di seluruh aplikasi
+- Mengoptimalkan penggunaan sumber daya dengan menghindari pembuatan koneksi berulang
+- Mempermudah pengelolaan data global seperti token autentikasi dan informasi sesi pengguna.
 
 ### 4. Jelaskan mekanisme pengiriman data mulai dari input hingga dapat ditampilkan pada Flutter.
 
+- User memasukkan data dari interface Flutter app
+- Dengan package `http` dan `CookieRequest` data yang di input user akan dimasukkan ke server Django
+- Server Django memproses data dan mengembalikan dalam bentuk JSON
+- Flutter App menerima JSON dan mengubahnya menjadi object Dart
+- Data ditampilkan di page Flutter yang telah disesuaikan
 
 ### 5. Jelaskan mekanisme autentikasi dari login, register, hingga logout. Mulai dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
 
+#### _Register_
+
+- User mengisi username dan password
+- Data diencode menjadi JSON dan dikirim ke server Django melalui `http` request POST, dalam kasus ini ke `http://127.0.0.1:8000/auth/register/`
+- Django menyimpan data baru ke database dan mengembalikan respons dan menampilkan ke user jika berhasil
+
+#### _Login_
+
+- User mengisi username dan password
+- Data dikirim ke server Django melalui `http` request POST, dalam kasus ini ke `http://127.0.0.1:8000/auth/login/`
+- Server Django menerima dan memverifikasi data
+- Jika berhasil, server mengembalikan cookie autentikasi yang disimpan di `CookieRequest` untuk digunakan request berikutnya.
+- Ketika Login berhasil, User akan di redirect ke halaman utama Flutter App
+
+#### _Logout_
+
+- Flutter App mengirim request `http` ke server Django, dalam kasus ini ke `http://127.0.0.1:8000/auth/logout/`
+- Server Django menghapus session user dan mengupdate status user
+- Mengarah user ke halaman login
 
 ### 6. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
 
+- Pertama, pada proyek Django yang dibuat pada tugas-tugas sebelumnya dibuat app baru bernama `authentication`
+- Setelah dibuat, app tersebut akan berisi function-function untuk mengimplementasi fitur login, logout, register, dan form pada Flutter App yang dibuat
+- Beberapa function yang dibuat dalam `views.py` adalah :
+  - Untuk Login
+  ```python
+  @csrf_exempt
+  def login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            auth_login(request, user)
+            # Status login sukses.
+            return JsonResponse({
+                "username": user.username,
+                "status": True,
+                "message": "Login sukses!"
+                # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
+            }, status=200)
+        else:
+            return JsonResponse({
+                "status": False,
+                "message": "Login gagal, akun dinonaktifkan."
+            }, status=401)
+
+    else:
+        return JsonResponse({
+            "status": False,
+            "message": "Login gagal, periksa kembali email atau kata sandi."
+        }, status=401)
+  ```
+  - Untuk Register
+  ```python
+  @csrf_exempt
+  def register(request):
+      if request.method == 'POST':
+          data = json.loads(request.body)
+          username = data['username']
+          password1 = data['password1']
+          password2 = data['password2']
+
+          # Check if the passwords match
+          if password1 != password2:
+              return JsonResponse({
+                  "status": False,
+                  "message": "Passwords do not match."
+              }, status=400)
+          
+          # Check if the username is already taken
+          if User.objects.filter(username=username).exists():
+              return JsonResponse({
+                  "status": False,
+                  "message": "Username already exists."
+              }, status=400)
+          
+          # Create the new user
+          user = User.objects.create_user(username=username, password=password1)
+          user.save()
+          
+          return JsonResponse({
+              "username": user.username,
+              "status": 'success',
+              "message": "User created successfully!"
+          }, status=200)
+      
+      else:
+          return JsonResponse({
+              "status": False,
+              "message": "Invalid request method."
+          }, status=400)
+  ```
+  
+  - Untuk membuat produk di Flutter App
+  ```python
+  @csrf_exempt
+  def create_product_flutter(request):
+      if request.method == 'POST':
+
+          data = json.loads(request.body)
+          new_product = Product.objects.create(
+              user=request.user,
+              name=data["name"],
+              price=int(data["price"]),
+              description=data["description"],
+          )
+
+          new_product.save()
+
+          return JsonResponse({"status": "success"}, status=200)
+      else:
+          return JsonResponse({"status": "error"}, status=401)
+  ```
+  - Untuk Logout
+  ```python
+  @csrf_exempt
+  def logout(request):
+      username = request.user.username
+
+      try:
+          auth_logout(request)
+          return JsonResponse({
+              "username": username,
+              "status": True,
+              "message": "Logout berhasil!"
+          }, status=200)
+      except:
+          return JsonResponse({
+          "status": False,
+          "message": "Logout gagal."
+          }, status=401)
+  ```
+  - Menambah beberapa package ke dalam proyek Flutter seperti `http`, `provider`, dan `pbp_django_auth` untuk membantu dalam perihal autentikasi dan otorisasi user serta dalam mengirim request ke server Django.
+  - Untuk Object Product sendiri harus dibuat supaya dapat menjaga struktur kode yang rapi, efisien, dan mudah dikelola, dengan itu dibuat objek Product dalam folder `models` dalam `product.dart` sebagai berikut :
+  ```dart
+  import 'dart:convert';
+
+  List<Product> productFromJson(String str) => List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
+
+  String productToJson(List<Product> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+  class Product {
+      String model;
+      String pk;
+      Fields fields;
+
+      Product({
+          required this.model,
+          required this.pk,
+          required this.fields,
+      });
+
+      factory Product.fromJson(Map<String, dynamic> json) => Product(
+          model: json["model"],
+          pk: json["pk"],
+          fields: Fields.fromJson(json["fields"]),
+      );
+
+      Map<String, dynamic> toJson() => {
+          "model": model,
+          "pk": pk,
+          "fields": fields.toJson(),
+      };
+  }
+
+  class Fields {
+      int user;
+      String name;
+      int price;
+      String description;
+
+      Fields({
+          required this.user,
+          required this.name,
+          required this.price,
+          required this.description,
+      });
+
+      factory Fields.fromJson(Map<String, dynamic> json) => Fields(
+          user: json["user"],
+          name: json["name"],
+          price: json["price"],
+          description: json["description"],
+      );
+
+      Map<String, dynamic> toJson() => {
+          "user": user,
+          "name": name,
+          "price": price,
+          "description": description,
+      };
+  }
+  ```
+  - Lalu dibuat 3 file Dart baru untuk menampilkan halaman login, register, dan untuk menampilkan daftar produk
+  - Fungsionalitas pada product form diubah supaya ketika menekan tombol save akan terbentuk objek product baru dan dapat ditampilkan pada halaman yang sesuai
+  ```dart
+  ....
+  onPressed: () async {
+    if (_formKey.currentState!.validate()) {
+      // Kirim ke Django dan tunggu respons
+      final response = await request.postJson(
+        "http://127.0.0.1:8000/auth/create-flutter/",
+        jsonEncode(<String, String>{
+          'name': _nama,
+          'price': _price.toString(),
+          'description': _description,
+        }),
+      );
+      if (context.mounted) {
+        if (response['status'] == 'success') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(
+            content: Text("Produk baru berhasil disimpan!"),
+          ));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyHomePage()),
+          );
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(
+            content: Text(
+                "Terdapat kesalahan, silakan coba lagi."),
+          ));
+        }
+      }
+    }
+  },
+  ....
+  ```
+  - Menambah kondisi pada `product_card.dart` jika button logout di tekan user maka akan menjalankan fitur logout
+  ```dart
+  ....
+  else if (widget.item.name == "Logout") {
+    final response = await request.logout(
+        "http://127.0.0.1:8000/auth/logout/");
+    String message = response["message"];
+    if (context.mounted) {
+      if (response['status']) {
+        String uname = response["username"];
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("$message Sampai jumpa, $uname."),
+        ));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+          ),
+        );
+      }
+    }
+  }
+  ....
+  ```
 
 ## ✅ Checklist Tugas 9
 - [x] Memastikan deployment proyek tugas Django kamu telah berjalan dengan baik.
@@ -31,19 +320,19 @@
 - [x] Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
 - [x] Membuat model kustom sesuai dengan proyek aplikasi Django.
 - [x] Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
-    - Tampilkan name, price, dan description dari masing-masing item pada halaman ini.
+  - Tampilkan name, price, dan description dari masing-masing item pada halaman ini.
 - [x] Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item.
-    - Halaman ini dapat diakses dengan menekan salah satu item pada halaman daftar Item.
-    - Tampilkan seluruh atribut pada model item kamu pada halaman ini.
-    - Tambahkan tombol untuk kembali ke halaman daftar item.
+  - Halaman ini dapat diakses dengan menekan salah satu item pada halaman daftar Item.
+  - Tampilkan seluruh atribut pada model item kamu pada halaman ini.
+  - Tambahkan tombol untuk kembali ke halaman daftar item.
 - [x] Melakukan filter pada halaman daftar item dengan hanya menampilkan item yang terasosiasi dengan pengguna yang login.
-- [ ] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
-    - Jelaskan mengapa kita perlu membuat model untuk melakukan pengambilan ataupun pengiriman data JSON? Apakah akan terjadi error jika kita tidak membuat model terlebih dahulu?
-    - Jelaskan fungsi dari library http yang sudah kamu implementasikan pada tugas ini
-    - Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
-    - Jelaskan mekanisme pengiriman data mulai dari input hingga dapat ditampilkan pada Flutter.
-    - Jelaskan mekanisme autentikasi dari login, register, hingga logout. Mulai dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
-    - Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+- [x] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
+  - Jelaskan mengapa kita perlu membuat model untuk melakukan pengambilan ataupun pengiriman data JSON? Apakah akan terjadi error jika kita tidak membuat model terlebih dahulu?
+  - Jelaskan fungsi dari library http yang sudah kamu implementasikan pada tugas ini
+  - Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+  - Jelaskan mekanisme pengiriman data mulai dari input hingga dapat ditampilkan pada Flutter.
+  - Jelaskan mekanisme autentikasi dari login, register, hingga logout. Mulai dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+  - Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
 - [x] Melakukan add-commit-push ke GitHub.
 
 ## 📃 Tugas 8
@@ -61,38 +350,38 @@ Ketika sebuah widget ditandai dengan `const`, ini akan dianggap oleh Flutter seb
 Column dan Row merupakan dua layout widget dalam Flutter yang berfungsi untuk menata widget secara vertikal dan horizontal sesuai keperluan.
 
 1. Column
-   
-   Fungsi : digunakan untuk menata widget secara vertikal dari atas ke bawah
-   
-   Implementasi :
-    ```dart
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text("Widget 1"),
-        Text("Widget 2"),
-        Text("Widget 3"),
-        ],
-    )
-    ```
+
+ Fungsi : digunakan untuk menata widget secara vertikal dari atas ke bawah
+
+ Implementasi :
+  ```dart
+  Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Text("Widget 1"),
+      Text("Widget 2"),
+      Text("Widget 3"),
+      ],
+  )
+  ```
 
 2. Row
 
-   Fungsi : digunakan untuk menata widget secara horizontal dari kiri ke kanan
-   
-   Implementasi :
-    ```dart
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon(Icons.star),
-        Icon(Icons.favorite),
-        Icon(Icons.thumb_up),
-      ],
-    )
-    ```
+ Fungsi : digunakan untuk menata widget secara horizontal dari kiri ke kanan
+
+ Implementasi :
+  ```dart
+  Row(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Icon(Icons.star),
+      Icon(Icons.favorite),
+      Icon(Icons.thumb_up),
+    ],
+  )
+  ```
 
 ### 3. Sebutkan apa saja elemen input yang kamu gunakan pada halaman form yang kamu buat pada tugas kali ini. Apakah terdapat elemen input Flutter lain yang tidak kamu gunakan pada tugas ini? Jelaskan!
 
@@ -102,7 +391,7 @@ Di Flutter, selain `TextFormField` terdapat banyak elemen input yang tersedia se
 - `Checkbox` : Memungkinkan user memilih satu atau lebih opsi dari banyak pilihan
 - `Radio` : Digunakan ketika terdapat sejumlah pilihan dan user hanya bisa memilih satu opsi dari beberapa pilihan tersebut.
 - `Switch` : Mirip seperti Checkbox, namun bentuknya seperti tombol yang bisa digeser ke kiri atau kanan. Digunakan untuk pengaturan seperti mengaktifkan atau menonaktifkan fitur tertentu.
-- `DropdownButton` : Menampilkan menu tarik turun atau dropdown yang memungkinkan user memilih satu dari beberapa opsi yang tersedia. 
+- `DropdownButton` : Menampilkan menu tarik turun atau dropdown yang memungkinkan user memilih satu dari beberapa opsi yang tersedia.
 
 ### 4. Bagaimana cara kamu mengatur tema (theme) dalam aplikasi Flutter agar aplikasi yang dibuat konsisten? Apakah kamu mengimplementasikan tema pada aplikasi yang kamu buat?
 
@@ -110,22 +399,25 @@ Cara saya mengatur tema dalam aplikasi Flutter supaya konsisten adalah dengan me
 
 ```dart
 MaterialApp(
-      title: 'SiniBeli-mobile',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.teal,
-        ).copyWith(secondary: const Color.fromARGB(255, 154, 225, 119)),
-        useMaterial3: true,
-      ),
-      home: MyHomePage(),
-    );
-```
+    title: 'SiniBeli-mobile',
+    theme: ThemeData(
+      colorScheme: ColorScheme.fromSwatch(
+        primarySwatch: Colors.teal,
+      ).copyWith(secondary: const Color.fromARGB(255, 154, 225, 119)),
+      useMaterial3: true,
+    ),
+    home: MyHomePage(),
+  );
+````
+
 Lalu untuk mengimplementasikannya ke elemen lain di aplikasi dilakukan seperti berikut,
+
 ```dart
 ...
  backgroundColor: Theme.of(context).colorScheme.primary,
 ...
 ```
+
 Pada contoh diatas `backgroundColor` mengambil warna yang sesuai dengan yang diterapkan di `MaterialApp` sehingga konsisten dengan yang ditetapkan.
 
 ### 5. Bagaimana cara kamu menangani navigasi dalam aplikasi dengan banyak halaman pada Flutter?
@@ -133,6 +425,7 @@ Pada contoh diatas `backgroundColor` mengambil warna yang sesuai dengan yang dit
 Navigasi dalam aplikasi dilakukan dengan drawer yang dibuat, drawer tersebut berisi tombol-tombol yang mengarahkan user ke halaman tertentu seperti halaman form tambah produk baru atau ke halaman utama.
 
 Ini dilakukan dengan widget `Navigator` melalui `BuildContext` dan memanggil fungsi yang ada, seperti :
+
 - `push()` : menambahkan suatu route ke dalam stack route sehingga route yang baru saja ditambahkan tersebut akan muncul dan ditampilkan kepada pengguna
   ```dart
   ...
@@ -155,8 +448,8 @@ Ini dilakukan dengan widget `Navigator` melalui `BuildContext` dan memanggil fun
       icon: const Icon(Icons.arrow_back_ios_new))
   ...
   ```
-- `pushReplacement()` :  menghapus route yang sedang ditampilkan kepada pengguna dan menggantinya dengan suatu route, ini menyebabkan route lama pada atas stack akan digantikan secara langsung oleh route baru yang diberikan tanpa mengubah kondisi elemen stack yang berada di bawahnya.
-Implementasi :
+- `pushReplacement()` : menghapus route yang sedang ditampilkan kepada pengguna dan menggantinya dengan suatu route, ini menyebabkan route lama pada atas stack akan digantikan secara langsung oleh route baru yang diberikan tanpa mengubah kondisi elemen stack yang berada di bawahnya.
+  Implementasi :
   ```dart
   ...
   onTap: () {
