@@ -8,6 +8,7 @@ void main() {
   runApp(const LoginApp());
 }
 
+// Root widget that sets up the application theme and initial route
 class LoginApp extends StatelessWidget {
   const LoginApp({super.key});
 
@@ -17,9 +18,44 @@ class LoginApp extends StatelessWidget {
       title: 'Login',
       theme: ThemeData(
         useMaterial3: true,
+        // Enhanced color scheme with a professional teal and green palette
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Colors.teal,
-        ).copyWith(secondary: const Color.fromARGB(255, 154, 225, 119)),
+          brightness: Brightness.light,
+        ).copyWith(
+          secondary: const Color.fromARGB(255, 154, 225, 119),
+          // Adding surface and background colors for better contrast
+          surface: Colors.white,
+          ),
+        // Custom text theme for consistent typography
+        textTheme: const TextTheme(
+          headlineMedium: TextStyle(
+            fontSize: 28.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.teal,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 16.0,
+            color: Colors.black87,
+          ),
+        ),
+        // Enhanced input decoration theme
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.grey[50],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(color: Colors.teal, width: 2.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide(color: Colors.teal.withOpacity(0.5)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(color: Colors.teal, width: 2.0),
+          ),
+        ),
       ),
       home: const LoginPage(),
     );
@@ -34,74 +70,85 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // Controllers for handling user input
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    // Access the CookieRequest instance for handling authentication
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
+      // Using the background color from our theme
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: const Text('Login'),
+        elevation: 0, // Removes shadow for a cleaner look
+        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Card(
-            elevation: 8,
+            elevation: 4, // Reduced elevation for a subtler shadow
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(16.0),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+            child: Container(
+              padding: const EdgeInsets.all(32.0),
+              constraints: const BoxConstraints(maxWidth: 400), // Limit card width
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Login',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  // App logo or icon could be added here
+                  const Icon(
+                    Icons.lock_outline,
+                    size: 48,
+                    color: Colors.teal,
                   ),
-                  const SizedBox(height: 30.0),
+                  const SizedBox(height: 24.0),
+                  // Login header
+                  Text(
+                    'Welcome Back',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    'Please sign in to continue',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                  ),
+                  const SizedBox(height: 32.0),
+                  // Username input field
                   TextField(
                     controller: _usernameController,
                     decoration: const InputDecoration(
                       labelText: 'Username',
                       hintText: 'Enter your username',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      prefixIcon: Icon(Icons.person_outline),
                     ),
                   ),
-                  const SizedBox(height: 12.0),
+                  const SizedBox(height: 16.0),
+                  // Password input field
                   TextField(
                     controller: _passwordController,
                     decoration: const InputDecoration(
                       labelText: 'Password',
                       hintText: 'Enter your password',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      ),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      prefixIcon: Icon(Icons.lock_outline),
                     ),
                     obscureText: true,
                   ),
-                  const SizedBox(height: 24.0),
+                  const SizedBox(height: 32.0),
+                  // Login button
                   ElevatedButton(
                     onPressed: () async {
                       String username = _usernameController.text;
                       String password = _passwordController.text;
 
-                      // Cek kredensial
-                      // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
-                      // Untuk menyambungkan Android emulator dengan Django pada localhost,
-                      // gunakan URL http://10.0.2.2/
+                      // Attempt login with provided credentials
                       final response = await request
                           .login("http://127.0.0.1:8000/auth/login/", {
                         'username': username,
@@ -112,21 +159,24 @@ class _LoginPageState extends State<LoginPage> {
                         String message = response['message'];
                         String usrname = response['username'];
                         if (context.mounted) {
+                          // Navigate to home page on successful login
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => MyHomePage()),
+                            MaterialPageRoute(builder: (context) => MyHomePage()),
                           );
+                          // Show welcome message
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
                               SnackBar(
-                                  content:
-                                      Text("$message Selamat datang, $usrname.")),
+                                content: Text("$message Selamat datang, $usrname."),
+                                backgroundColor: Colors.green,
+                              ),
                             );
                         }
                       } else {
                         if (context.mounted) {
+                          // Show error dialog on failed login
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
@@ -135,9 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                               actions: [
                                 TextButton(
                                   child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
+                                  onPressed: () => Navigator.pop(context),
                                 ),
                               ],
                             ),
@@ -147,19 +195,31 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 50),
                       backgroundColor: Theme.of(context).colorScheme.primary,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      elevation: 2, // Subtle elevation for the button
                     ),
-                    child: const Text('Login'),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 36.0),
+                  const SizedBox(height: 24.0),
+                  // Register link
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const RegisterPage()),
+                          builder: (context) => const RegisterPage(),
+                        ),
                       );
                     },
                     child: Text(
@@ -167,6 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
