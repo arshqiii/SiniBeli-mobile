@@ -25,18 +25,18 @@
 
 
 ## ✅ Checklist Tugas 9
-- [ ] Memastikan deployment proyek tugas Django kamu telah berjalan dengan baik.
-- [ ] Mengimplementasikan fitur registrasi akun pada proyek tugas Flutter.
-- [ ] Membuat halaman login pada proyek tugas Flutter.
-- [ ] Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
-- [ ] Membuat model kustom sesuai dengan proyek aplikasi Django.
-- [ ] Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
+- [x] Memastikan deployment proyek tugas Django kamu telah berjalan dengan baik.
+- [x] Mengimplementasikan fitur registrasi akun pada proyek tugas Flutter.
+- [x] Membuat halaman login pada proyek tugas Flutter.
+- [x] Mengintegrasikan sistem autentikasi Django dengan proyek tugas Flutter.
+- [x] Membuat model kustom sesuai dengan proyek aplikasi Django.
+- [x] Membuat halaman yang berisi daftar semua item yang terdapat pada endpoint JSON di Django yang telah kamu deploy.
     - Tampilkan name, price, dan description dari masing-masing item pada halaman ini.
-- [ ] Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item.
+- [x] Membuat halaman detail untuk setiap item yang terdapat pada halaman daftar Item.
     - Halaman ini dapat diakses dengan menekan salah satu item pada halaman daftar Item.
     - Tampilkan seluruh atribut pada model item kamu pada halaman ini.
     - Tambahkan tombol untuk kembali ke halaman daftar item.
-- [ ] Melakukan filter pada halaman daftar item dengan hanya menampilkan item yang terasosiasi dengan pengguna yang login.
+- [x] Melakukan filter pada halaman daftar item dengan hanya menampilkan item yang terasosiasi dengan pengguna yang login.
 - [ ] Menjawab beberapa pertanyaan berikut pada README.md pada root folder (silakan modifikasi README.md yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
     - Jelaskan mengapa kita perlu membuat model untuk melakukan pengambilan ataupun pengiriman data JSON? Apakah akan terjadi error jika kita tidak membuat model terlebih dahulu?
     - Jelaskan fungsi dari library http yang sudah kamu implementasikan pada tugas ini
@@ -44,7 +44,7 @@
     - Jelaskan mekanisme pengiriman data mulai dari input hingga dapat ditampilkan pada Flutter.
     - Jelaskan mekanisme autentikasi dari login, register, hingga logout. Mulai dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
     - Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
-- [ ] Melakukan add-commit-push ke GitHub.
+- [x] Melakukan add-commit-push ke GitHub.
 
 ## 📃 Tugas 8
 
